@@ -3,7 +3,7 @@ import { api } from '../../../../convex/_generated/api';
 import { useCallback, useMemo, useState } from 'react';
 import { Doc } from '../../../../convex/_generated/dataModel';
 
-type ResponseType = Doc<'workspaces'>;
+type ResponseType = Doc<'workspaces'> | null;
 type RequestType = { name: string };
 
 type Options = {

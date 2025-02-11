@@ -23,7 +23,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useCreateWorkspacesApi } from '../api/create-workspaces';
-import { useRouter } from 'next/navigation';
 
 export default function WorkspaceCreateModal() {
   const form = useForm<CreateWorkspaceSchema>({
@@ -35,7 +34,6 @@ export default function WorkspaceCreateModal() {
 
   const { mutate, isPending } = useCreateWorkspacesApi();
   const { isOpen, onClose } = useCreateWorkspaceModalStore();
-  const router = useRouter();
 
   function onSubmit(values: CreateWorkspaceSchema) {
     const { name } = values;

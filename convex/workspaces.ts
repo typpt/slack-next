@@ -21,7 +21,9 @@ export const createWorkspaces = mutation({
       joinCode: String(generateRandomNumber()),
     });
 
-    return workspaceId;
+    const workspace = await ctx.db.get(workspaceId);
+
+    return workspace;
   },
 });
 
