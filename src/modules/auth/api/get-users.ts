@@ -1,7 +1,10 @@
-import { useQuery } from '@tanstack/react-query';
-import { convexQuery } from '@convex-dev/react-query';
+import { useQuery } from 'convex/react';
 import { api } from '../../../../convex/_generated/api';
 
 export function useGetUsersApi() {
-  return useQuery(convexQuery(api.users.getUsers, {}));
+  const data = useQuery(api.users.getUsers);
+
+  const isPending = data === undefined;
+
+  return { data, isPending };
 }
