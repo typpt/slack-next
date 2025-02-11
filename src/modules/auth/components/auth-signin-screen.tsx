@@ -36,7 +36,7 @@ export default function AuthSignInScreen() {
     const { email, password } = values;
 
     setIsPending(true);
-    signIn('password', { email, password, flow: 'signUp' }).finally(() =>
+    signIn('password', { email, password, flow: 'signIn' }).finally(() =>
       setIsPending(false)
     );
   }

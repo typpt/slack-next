@@ -114,7 +114,7 @@ export default function AuthSignUpScreen() {
               name="confirmPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>COnfirm Password</FormLabel>
+                  <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
                     <Input
                       disabled={isPending}
