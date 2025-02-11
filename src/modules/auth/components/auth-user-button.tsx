@@ -8,17 +8,27 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { LogInIcon } from 'lucide-react';
+import { LoaderIcon, LogInIcon } from 'lucide-react';
+import { useGetUsersApi } from '../api/get-users';
 
 export default function AuthUserButton() {
-  const nameFallback = 'krisno'.charAt(0).toUpperCase();
+  const { data, isPending } = useGetUsersApi();
   const { signOut } = useAuthActions();
+
+  if (isPending) {
+    return <LoaderIcon className="size-5 animate-spin text-muted-foreground" />;
+  }
+
+  if (!data) return null;
+
+  const { name, image } = data;
+  const nameFallback = name?.charAt(0).toUpperCase() ?? 'U';
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="outline-none relative">
         <Avatar className="size-10 hover:opacity-50 transition">
-          <AvatarImage />
+          <AvatarImage src={image} alt={name} />
           <AvatarFallback className="text-base font-medium">
             {nameFallback}
           </AvatarFallback>
