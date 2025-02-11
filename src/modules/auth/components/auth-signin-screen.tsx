@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+import { useAuthActions } from '@convex-dev/auth/react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useForm } from 'react-hook-form';
 import { SignInSchema, signInSchema } from '../validation/sign-in-schema';
@@ -27,8 +29,16 @@ export default function AuthSignInScreen() {
     },
   });
 
+  const { signIn } = useAuthActions();
+  const [isPending, setIsPending] = useState<true | false>(false);
+
   function onSubmit(values: SignInSchema) {
-    console.log(values);
+    const { email, password } = values;
+
+    setIsPending(true);
+    signIn('password', { email, password, flow: 'signUp' }).finally(() =>
+      setIsPending(false)
+    );
   }
 
   return (
@@ -47,6 +57,7 @@ export default function AuthSignInScreen() {
                   <FormLabel>Email</FormLabel>
                   <FormControl>
                     <Input
+                      disabled={isPending}
                       type="email"
                       placeholder="jhon@example.com"
                       {...field}
@@ -62,14 +73,26 @@ export default function AuthSignInScreen() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="******" {...field} />
+                    <Input
+                      disabled={isPending}
+                      type="password"
+                      placeholder="******"
+                      {...field}
+                    />
                   </FormControl>
                 </FormItem>
               )}
             />
 
-            <Button type="submit" size="lg" className="w-full">
-              <Loader2Icon className="size-5 animate-spin text-primary-foreground" />
+            <Button
+              type="submit"
+              disabled={isPending}
+              size="lg"
+              className="w-full"
+            >
+              {isPending && (
+                <Loader2Icon className="size-5 animate-spin text-primary-foreground" />
+              )}
               <span>Login</span>
             </Button>
           </form>

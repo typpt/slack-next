@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+import { useAuthActions } from '@convex-dev/auth/react';
 import {
   Card,
   CardContent,
@@ -33,8 +35,16 @@ export default function AuthSignUpScreen() {
     },
   });
 
+  const { signIn } = useAuthActions();
+  const [isPending, setIsPending] = useState<true | false>(false);
+
   function onSubmit(values: SignUpSchema) {
-    console.log(values);
+    const { name, email, password } = values;
+
+    setIsPending(true);
+    signIn('password', { name, email, password, flow: 'signUp' }).finally(() =>
+      setIsPending(false)
+    );
   }
 
   return (
@@ -55,7 +65,12 @@ export default function AuthSignUpScreen() {
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input type="text" placeholder="jhon example" {...field} />
+                    <Input
+                      disabled={isPending}
+                      type="text"
+                      placeholder="jhon example"
+                      {...field}
+                    />
                   </FormControl>
                 </FormItem>
               )}
@@ -68,6 +83,7 @@ export default function AuthSignUpScreen() {
                   <FormLabel>Email</FormLabel>
                   <FormControl>
                     <Input
+                      disabled={isPending}
                       type="email"
                       placeholder="jhon@example.com"
                       {...field}
@@ -83,7 +99,12 @@ export default function AuthSignUpScreen() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="******" {...field} />
+                    <Input
+                      disabled={isPending}
+                      type="password"
+                      placeholder="******"
+                      {...field}
+                    />
                   </FormControl>
                 </FormItem>
               )}
@@ -95,13 +116,25 @@ export default function AuthSignUpScreen() {
                 <FormItem>
                   <FormLabel>COnfirm Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="******" {...field} />
+                    <Input
+                      disabled={isPending}
+                      type="password"
+                      placeholder="******"
+                      {...field}
+                    />
                   </FormControl>
                 </FormItem>
               )}
             />
-            <Button type="submit" size="lg" className="w-full">
-              <Loader2Icon className="size-5 animate-spin text-primary-foreground" />
+            <Button
+              type="submit"
+              disabled={isPending}
+              size="lg"
+              className="w-full"
+            >
+              {isPending && (
+                <Loader2Icon className="size-5 animate-spin text-primary-foreground" />
+              )}
               <span>Sign up</span>
             </Button>
           </form>
