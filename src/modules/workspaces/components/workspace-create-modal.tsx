@@ -22,6 +22,8 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { useCreateWorkspacesApi } from '../api/create-workspaces';
+import { useRouter } from 'next/navigation';
 
 export default function WorkspaceCreateModal() {
   const form = useForm<CreateWorkspaceSchema>({
@@ -31,10 +33,21 @@ export default function WorkspaceCreateModal() {
     },
   });
 
+  const { mutate, isPending } = useCreateWorkspacesApi();
   const { isOpen, onClose } = useCreateWorkspaceModalStore();
+  const router = useRouter();
 
   function onSubmit(values: CreateWorkspaceSchema) {
-    console.log(values);
+    const { name } = values;
+
+    mutate(
+      { name },
+      {
+        onSuccess: (data) => {
+          console.log(data?._id);
+        },
+      }
+    );
   }
 
   return (
@@ -52,6 +65,7 @@ export default function WorkspaceCreateModal() {
                 <FormItem>
                   <FormControl>
                     <Input
+                      disabled={isPending}
                       type="text"
                       placeholder='Workspace name e.g. "Work", "Personal", "Home"'
                       {...field}
@@ -62,10 +76,11 @@ export default function WorkspaceCreateModal() {
               )}
             />
             <div className="flex justify-start gap-x-3">
-              <Button type="submit" size="sm">
+              <Button disabled={isPending} type="submit" size="sm">
                 Create
               </Button>
               <Button
+                disabled={isPending}
                 onClick={onClose}
                 type="button"
                 variant="secondary"
