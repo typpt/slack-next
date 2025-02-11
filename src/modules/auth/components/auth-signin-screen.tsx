@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Loader2Icon } from 'lucide-react';
+import { Loader2Icon, TriangleAlert } from 'lucide-react';
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
 import AuthSocialButton from './auth-social-button';
@@ -31,14 +31,18 @@ export default function AuthSignInScreen() {
 
   const { signIn } = useAuthActions();
   const [isPending, setIsPending] = useState<true | false>(false);
+  const [isError, setIsError] = useState<string>('');
 
   function onSubmit(values: SignInSchema) {
     const { email, password } = values;
-
+    setIsError('');
     setIsPending(true);
-    signIn('password', { email, password, flow: 'signIn' }).finally(() =>
-      setIsPending(false)
-    );
+    signIn('password', { email, password, flow: 'signIn' })
+      .catch(() => setIsError('Invalid email or password'))
+      .finally(() => {
+        form.reset();
+        setIsPending(false);
+      });
   }
 
   return (
@@ -83,7 +87,12 @@ export default function AuthSignInScreen() {
                 </FormItem>
               )}
             />
-
+            {!!isError && (
+              <div className="flex items-center gap-x-3 p-3 bg-destructive/15 rounded-md text-destructive text-sm">
+                <TriangleAlert />
+                <span>{isError}</span>
+              </div>
+            )}
             <Button
               type="submit"
               disabled={isPending}

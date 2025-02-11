@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Loader2Icon } from 'lucide-react';
+import { Loader2Icon, TriangleAlert } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AuthSignUpScreen() {
@@ -37,14 +37,18 @@ export default function AuthSignUpScreen() {
 
   const { signIn } = useAuthActions();
   const [isPending, setIsPending] = useState<true | false>(false);
+  const [isError, setIsError] = useState<string>('');
 
   function onSubmit(values: SignUpSchema) {
     const { name, email, password } = values;
-
+    setIsError('');
     setIsPending(true);
-    signIn('password', { name, email, password, flow: 'signUp' }).finally(() =>
-      setIsPending(false)
-    );
+    signIn('password', { name, email, password, flow: 'signUp' })
+      .catch(() => setIsError('Something went wrong'))
+      .finally(() => {
+        form.reset();
+        setIsPending(false);
+      });
   }
 
   return (
@@ -126,6 +130,12 @@ export default function AuthSignUpScreen() {
                 </FormItem>
               )}
             />
+            {!!isError && (
+              <div className="flex items-center gap-x-3 p-3 bg-destructive/15 rounded-md text-destructive text-sm">
+                <TriangleAlert />
+                <span>{isError}</span>
+              </div>
+            )}
             <Button
               type="submit"
               disabled={isPending}
